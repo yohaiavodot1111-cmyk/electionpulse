@@ -5,6 +5,7 @@
 <title>ElectionPulse | מרכז נתוני הבחירות</title>
 <meta name="description" content="דשבורד נתוני בחירות דינמי — אחוזי הצבעה, השוואות, מנדטים וזיהוי חריגות">
 <style>
+.map-window{border:1px solid #dce7f7;background:#eaf2fb;border-radius:12px;overflow:hidden;min-height:475px}.map-window iframe{height:475px;border:0;width:100%;display:block}.archive-meta{margin-bottom:12px;font-size:12px;color:#5e728d}.historical-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:15px}.historical-stat{background:#f1f7ff;border:1px solid #e0ebfa;padding:13px;border-radius:11px}.historical-stat b{color:#1a4b86;font-size:21px;display:block}.historical-stat span{color:#67809e;font-size:12px}@media(max-width:890px){.historical-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:580px){.historical-stats{grid-template-columns:1fr 1fr}.map-window,.map-window iframe{min-height:350px;height:350px}}
 :root{--navy:#142e52;--blue:#2365e8;--blue2:#0e82ed;--cyan:#12b5dd;--soft:#e9f1ff;--green:#139268;--red:#df4d59;--amber:#cd8a22;--ink:#20324c;--muted:#77869d;--line:#e3eaf3;--bg:#f5f8fc;--card:#fff;--shadow:0 7px 24px rgba(24,63,118,.055);--r:15px}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}.mono{font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:embed;display:inline-block}.muted{color:var(--muted)}.tiny{font-size:11px}.small{font-size:12px}.bold{font-weight:800}.up{color:var(--green)}.down{color:var(--red)}.blank{color:#aab5c6}.hide{display:none!important}
 .app{display:grid;grid-template-columns:222px minmax(0,1fr);min-height:100vh}.sidebar{background:linear-gradient(173deg,#14375f 0%,#153054 55%,#102541 100%);color:#cad9ee;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;padding:23px 13px;z-index:10}.brand{display:flex;align-items:center;gap:10px;color:#fff;padding:4px 9px 25px;border-bottom:1px solid #ffffff20;margin-bottom:18px}.mark{height:42px;width:42px;border:1px solid #7da9da;border-radius:12px;display:grid;place-items:center;background:#ffffff0c;font-size:23px}.brand b{font-size:19px;display:block}.brand small{font-size:11px;color:#9dbbdc}.navBtn{display:flex;align-items:center;gap:12px;width:100%;color:#bfd0e6;padding:12px 14px;background:none;border:0;border-radius:10px;text-align:right;margin:2px 0}.navBtn:hover{background:#ffffff12;color:#fff}.navBtn.active{background:#2b74ec;color:white;box-shadow:0 5px 15px #0002}.navBtn .ico{width:21px;text-align:center;font-size:18px}.sidefoot{margin-top:auto;padding:16px 11px;border-top:1px solid #ffffff22;color:#aec6e3;font-size:12px}.sidefoot button{width:100%;margin-top:12px;background:#ffffff16;border:1px solid #ffffff31;border-radius:9px;color:white;padding:9px}
@@ -30,12 +31,12 @@
     <button class="navBtn" data-jump="localities"><span class="ico">▦</span>פילוח יישובים</button>
     <button class="navBtn" data-jump="historical"><span class="ico">▧</span>נתונים היסטוריים</button>
   </nav>
-  <div class="sidefoot"><div>מבוסס על נתונים עם ציון מקור וזמן.</div><div>נתוני הדגמה מסומנים בבירור.</div><button id="sideSettings">⚙ הגדרות וחיבור נתונים</button></div>
+  <div class="sidefoot"><div>מבוסס על נתונים עם ציון מקור וזמן.</div><div>נתוני הדגמה מסומנים בבירור.</div><button id="sideSettings">⚙ הגדרות</button></div>
 </aside>
 <main class="main" id="overview">
   <header class="topbar">
     <div><div class="eyebrow">בחירות לכנסת ה־26 · מערכת ניטור ואנליטיקה</div><h1>דאשבורד הבחירות בישראל</h1><p>השתתפות · היסטוריה · נתוני ספירה · מנדטים · חריגות · סיקור תקשורתי</p></div>
-    <div class="actions"><span class="status-pill" id="status"><span class="dot"></span><span id="statusText">לא מחובר</span></span><button class="btn" id="btnPoll">↻ בדיקת עדכון</button><button class="btn" id="btnImport">⇧ ייבוא נתונים</button><button class="btn primary" id="btnSettings">⚙ חיבור מקור</button></div>
+    <div class="actions"><span class="status-pill" id="status"><span class="dot"></span><span id="statusText">לא מחובר</span></span><button class="btn" id="btnPoll">↻ בדיקת עדכון</button><button class="btn" id="btnImport">⇧ ייבוא נתונים</button><button class="btn primary" id="btnSettings">⚙ הגדרות</button></div>
   </header>
   <div class="notice" id="notice"><span>ⓘ</span><div id="noticeText"><strong>מתחילים מנתונים מאומתים.</strong> נתוני ההצבעה של היום יוצגו לאחר טעינת מקור רשמי או דיווח מאומת. הסקירה ההיסטורית זמינה כעת.</div></div>
   <div class="filters">
@@ -64,11 +65,29 @@
     <article class="card panel scrollanchor" id="media"><div class="panel-head"><h2>▤ תקשורת ורשתות</h2><button class="btn sm" id="addMedia">+ הוסף פרסום</button></div><div id="mediaFeed" class="feed"></div><div class="footerhint">פרסומים ציבוריים בלבד, עם קישור וזמן. ללא פרסום אוטומטי של טענות שלא אומתו.</div></article>
   </section>
   <section class="card table-card scrollanchor" id="localities"><div class="panel-head"><h2>▦ פילוח דינמי לפי יישובים</h2><div class="table-actions"><input class="input search" id="searchLoc" placeholder="חיפוש יישוב..."><select class="filter" id="sortLoc" style="min-width:145px"><option value="turnout">מיון לפי השתתפות</option><option value="name">מיון לפי שם</option><option value="change">מיון לפי שינוי</option><option value="voters">מיון לפי מצביעים</option></select><button class="btn sm" id="exportCsv">↓ ייצוא CSV</button></div></div><div class="table-scroll"><table class="data-table"><thead><tr><th>יישוב</th><th>מחוז</th><th>בעלי זכות בחירה</th><th>מצביעים</th><th>הצבעה 2026</th><th>נתון השוואה באותה שעה</th><th>שינוי בנקודות אחוז</th><th>מספר קלפיות</th></tr></thead><tbody id="locRows"><tr><td colspan="8" style="text-align:center;padding:25px;color:#8193ad">לא התקבלו עדיין נתוני יישובים. ניתן לייבא קובץ CSV/JSON או להפעיל הדגמה.</td></tr></tbody></table></div><div class="footerhint" id="localityHint">לא מוצגת השוואה בין אחוז השתתפות חלקי לבין אחוז סופי של בחירות קודמות.</div></section>
-  <section class="card table-card scrollanchor" id="historical"><div class="panel-head"><h2>▧ בסיס השוואה — בחירות קודמות</h2><span class="tag blue">נתונים סופיים</span></div><div class="histcards" id="historicalCards"></div><div class="footerhint">מקור: ועדת הבחירות המרכזית והכנסת. בחלק ממערכות הבחירות נתוני ההשתתפות במהלך יום הבחירות מבוססים על מדגם ולא על ספירה מלאה.</div></section>
+  <section class="card panel scrollanchor" id="officialMap" style="margin-bottom:15px">
+  <div class="panel-head"><h2>◫ מפת הצבעה רשמית — ועדת הבחירות / GovMap</h2><div class="panel-tools"><span class="tag green">מקור ממשלתי</span><a class="btn sm primary" href="https://elections.govmap.gov.il/" target="_blank" rel="noopener noreferrer">פתח את המפה הרשמית ↗</a></div></div>
+  <p class="muted small" style="margin:0 0 12px">המפה נטענת ישירות מהאתר הממשלתי ומתעדכנת לפי מועדי פרסום הוועדה. אם ההטמעה נחסמת בדפדפן, השתמש בקישור לפתיחה בחלון נפרד.</p>
+  <div class="map-window"><iframe title="מפת הבחירות הממשלתית GovMap" src="https://elections.govmap.gov.il/" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+  <p class="footerhint">המפה אינה API של נתונים מספריים. נתוניה מוצגים כפי שהוועדה מפרסמת אותם. מקור: elections.govmap.gov.il.</p>
+</section>
+<section class="card table-card scrollanchor" id="archiveExplorer">
+  <div class="panel-head" style="flex-wrap:wrap"><h2>▦ מעבדת השוואות היסטוריות לפי יישוב</h2>
+    <div class="table-actions"><label class="small muted" for="archiveRound">בחירות ראשיות</label><select class="filter" id="archiveRound"><option value="25">2022 · כנסת 25</option><option value="24">2021 · כנסת 24</option><option value="23">2020 · כנסת 23</option><option value="22">2019 ספט׳ · כנסת 22</option><option value="21">2019 אפר׳ · כנסת 21</option></select>
+    <label class="small muted" for="compareRound">השוואה ל־</label><select class="filter" id="compareRound"><option value="24">2021 · כנסת 24</option><option value="25">2022 · כנסת 25</option><option value="23">2020 · כנסת 23</option><option value="22">2019 ספט׳ · כנסת 22</option><option value="21">2019 אפר׳ · כנסת 21</option></select>
+    <input class="input search" id="archiveSearch" placeholder="חפש יישוב בארכיון…" aria-label="חיפוש יישובים היסטוריים" /></div>
+  </div>
+  <div class="archive-meta" id="archiveMeta">טוען נתוני עבר ממאגר הנתונים הפתוח…</div>
+  <div class="historical-stats" id="historicalStats"></div>
+  <div class="table-scroll"><table class="data-table"><thead><tr><th>יישוב</th><th>בעלי זכות בחירה</th><th>מצביעים</th><th>אחוז בבחירות שנבחרו</th><th>אחוז בבחירות להשוואה</th><th>שינוי בנקודות אחוז</th><th>גידול/קיטון במספר המצביעים</th></tr></thead><tbody id="archiveRows"><tr><td colspan="7" class="muted">טוען נתונים...</td></tr></tbody></table></div>
+  <p class="footerhint">השוואת תוצאות סופיות בלבד. התאמת יישובים לפי סמל יישוב, אם קיים; שינויי גבולות, איחודי יישובים והרכב אוכלוסייה מחייבים זהירות בפרשנות. מקור הנתונים: ארכיון ציבורי עצמאי המבוסס על פרסומי ועדת הבחירות המרכזית.</p>
+</section>
+<section class="card table-card scrollanchor" id="historical"><div class="panel-head"><h2>▧ בסיס השוואה — בחירות קודמות</h2><span class="tag blue">נתונים סופיים</span></div><div class="histcards" id="historicalCards"></div><div class="footerhint">מקור: ועדת הבחירות המרכזית והכנסת. בחלק ממערכות הבחירות נתוני ההשתתפות במהלך יום הבחירות מבוססים על מדגם ולא על ספירה מלאה.</div></section>
+  <div class="sourceinfo" id="mediaAutoStatus">חדשות: בודק מקורות ציבוריים. לפרסומי X ניתן לפתוח חיפוש חי <a href="https://x.com/search?q=%D7%91%D7%97%D7%99%D7%A8%D7%95%D7%AA%202026&f=live" target="_blank" rel="noopener noreferrer">ב־X ↗</a> (ללא API מחובר).</div>
   <div class="sourceinfo" id="sourceFooter">נתונים היסטוריים: ועדת הבחירות המרכזית. הבחירות לכנסת ה־26: מספר בעלי זכות בחירה 7,331,981; 12,018 קלפיות. נתונים חיים יופיעו רק לאחר סנכרון מוצלח.</div>
 </main></div>
 <input type="file" id="fileInput" accept=".json,.csv,application/json,text/csv" hidden>
-<div class="modalbg" id="settingsModal"><div class="modal"><div class="modal-head"><h2>⚙ הגדרת מקור נתונים והתעדכנות</h2><button class="close" data-close="settingsModal">×</button></div><p>בגרסת הענן מקור הנתונים מוגדר ב־Vercel באמצעות משתנה הסביבה ELECTION_FEED_URL. פונקציית API מושכת קובץ JSON או CSV ישיר; אין צורך בשרת מקומי. תדירות הרענון נשלטת כאן לכל דפדפן בנפרד.</p><div class="fields"><div class="full"><label>מקור נתונים בענן (נקבע ב־Vercel, לקריאה בלבד)</label><input class="input" id="sourceUrl" readonly placeholder="לא הוגדר ELECTION_FEED_URL ב־Vercel" dir="ltr"></div><div><label>תדירות בדיקת עדכונים</label><select id="refreshSel" class="input"><option value="30">כל 30 שניות</option><option value="60">כל דקה</option><option value="120">כל שתי דקות</option><option value="300">כל 5 דקות</option></select></div><div><label>הפעל סנכרון אוטומטי</label><select id="autoSel" class="input"><option value="yes">פעיל</option><option value="no">כבוי</option></select></div></div><div class="sep"></div><h3>עדכון ידני מסומן</h3><p>כאשר יש בידיך עדכון מאומת שטרם זמין בפיד, אפשר להזין אותו ידנית. במצב זה המקור יסומן "ידני — לא אומת אוטומטית".</p><div class="fields"><div><label>אחוז הצבעה ארצי</label><input id="manualPct" class="input" type="number" min="0" max="100" step="0.01" placeholder="לדוגמה: 15.9"></div><div><label>שעת המדידה</label><input id="manualTime" class="input" type="time" value="11:00"></div></div><div class="form-footer"><button class="btn primary" id="saveSource">שמור הגדרות</button><button class="btn" id="saveManual">שמור עדכון ידני</button></div><div class="footerhint">העדפות הרענון, הדיווחים הידניים וקובצי הייבוא נשמרים בדפדפן שלך בלבד ואינם מסתנכרנים בין משתמשים. כתובת הפיד הציבורית נקבעת במשתני הסביבה ב־Vercel; יש לבצע פריסה מחדש לאחר שינוי.</div></div></div>
+<div class="modalbg" id="settingsModal"><div class="modal"><div class="modal-head"><h2>⚙ הגדרת מקור נתונים והתעדכנות</h2><button class="close" data-close="settingsModal">×</button></div><p>לצפייה בהיסטוריה ובמפת הבחירות אין צורך להגדיר כלום. למידע מספרי חי באמצעות API, אם יפורסם פיד מתאים, אפשר להגדיר ELECTION_FEED_URL ב־Vercel. פונקציית API מושכת קובץ JSON או CSV ישיר; אין צורך בשרת מקומי. תדירות הרענון נשלטת כאן לכל דפדפן בנפרד.</p><div class="fields"><div class="full"><label>מקור נתונים בענן (נקבע ב־Vercel, לקריאה בלבד)</label><input class="input" id="sourceUrl" readonly placeholder="לא הוגדר ELECTION_FEED_URL ב־Vercel" dir="ltr"></div><div><label>תדירות בדיקת עדכונים</label><select id="refreshSel" class="input"><option value="30">כל 30 שניות</option><option value="60">כל דקה</option><option value="120">כל שתי דקות</option><option value="300">כל 5 דקות</option></select></div><div><label>הפעל סנכרון אוטומטי</label><select id="autoSel" class="input"><option value="yes">פעיל</option><option value="no">כבוי</option></select></div></div><div class="sep"></div><h3>עדכון ידני מסומן</h3><p>כאשר יש בידיך עדכון מאומת שטרם זמין בפיד, אפשר להזין אותו ידנית. במצב זה המקור יסומן "ידני — לא אומת אוטומטית".</p><div class="fields"><div><label>אחוז הצבעה ארצי</label><input id="manualPct" class="input" type="number" min="0" max="100" step="0.01" placeholder="לדוגמה: 15.9"></div><div><label>שעת המדידה</label><input id="manualTime" class="input" type="time" value="11:00"></div></div><div class="form-footer"><button class="btn primary" id="saveSource">שמור הגדרות</button><button class="btn" id="saveManual">שמור עדכון ידני</button></div><div class="footerhint">העדפות הרענון, הדיווחים הידניים וקובצי הייבוא נשמרים בדפדפן שלך בלבד ואינם מסתנכרנים בין משתמשים. כתובת הפיד הציבורית נקבעת במשתני הסביבה ב־Vercel; יש לבצע פריסה מחדש לאחר שינוי.</div></div></div>
 <div class="modalbg" id="mediaModal"><div class="modal"><div class="modal-head"><h2>+ תיעוד פרסום ציבורי</h2><button class="close" data-close="mediaModal">×</button></div><div class="fields"><div><label>גורם מפרסם</label><input class="input" id="mediaSource" placeholder="שם כלי התקשורת או החשבון"></div><div><label>סוג מקור</label><select class="input" id="mediaKind"><option value="news">כלי תקשורת</option><option value="social">רשת חברתית</option><option value="official">מקור רשמי</option></select></div><div class="full"><label>כותרת / טענה</label><textarea class="input" id="mediaTitle" rows="3" placeholder="נוסח מדויק של הפרסום"></textarea></div><div><label>אחוז הצבעה שפורסם (לא חובה)</label><input class="input" type="number" min="0" max="100" step="0.01" id="mediaClaimPct" placeholder="לא חובה"></div><div><label>שעת הנתון שפורסם</label><input class="input" type="time" id="mediaClaimTime" value="11:00"></div><div class="full"><label>קישור למקור</label><input class="input" dir="ltr" id="mediaUrl" placeholder="https://..."></div></div><div class="form-footer"><button class="btn primary" id="saveMedia">הוסף ליומן</button></div></div></div>
 <div class="toast" id="toast"></div>
 <script>
@@ -134,7 +153,7 @@ function render(){const y=$('yearSel').value,h=HIST[y],t=state.turnout,ct=state.
  renderChart();renderAnomalies();renderMedia();renderLocalities();renderHistoryCards();renderRegionOptions();
  if(demo){setStatus('demo','הדגמה — לא נתוני אמת');$('notice').className='notice';$('noticeText').innerHTML='<strong>סביבת הדגמה.</strong> כל נתוני 2026 במסך זה מדומים לצורך בדיקת הממשק ואינם תוצאות בחירות. לחץ על „הפסק הדגמה” כדי לחזור לנתונים השמורים.'}
  else if(state.turnout||state.counted){setStatus(state.sourceType==='demo'?'demo':state.sourceType==='auto'?'live':'offline',state.sourceType==='demo'?'נתוני בדיקה — לא אמת':state.sourceType==='auto'?'סנכרון מקור פעיל':'נתונים מיובאים / ידניים');$('notice').className='notice';$('noticeText').textContent='מקור: '+(state.source||'ייבוא מקומי')+' | סטטוס: '+(state.sourceType==='demo'?'נתוני בדיקה מדומים':state.sourceType==='auto'?'נקלט מהמקור שהוגדר ב־Vercel (לא מעיד על אימות רשמי)':'לא אומת אוטומטית')+' | יש לבדוק תאריך המדידה ולא להסיק מתוצאות חלקיות על התוצאה הסופית.'}
- else{setStatus('disconnected','ממתינים לנתונים');$('notice').className='notice';$('noticeText').innerHTML='<strong>טרם נקלטו אחוזי הצבעה להיום.</strong> בסיס ההשוואה ההיסטורי פעיל. הגדר ELECTION_FEED_URL ב־Vercel או טען קובץ.'}
+ else{setStatus('disconnected','ממתינים לנתונים');$('notice').className='notice';$('noticeText').innerHTML='<strong>טרם נקלטו אחוזי הצבעה להיום.</strong> בסיס ההשוואה ההיסטורי פעיל. הבחירות החיות זמינות גם במפה הממשלתית למטה. אין עדיין מקור מספרי ישיר מאומת למונה הארצי; ניתן לטעון עדכון ידני או פיד כשהוא יפורסם.'}
 }
 function describeDiff(){const diff=timedDiff();return diff===null?'נתון השוואה לא זמין':(diff>=0?'+':'')+dec(diff)+' נקודות אחוז';}
 function timedDiff(){if(!state.turnout||!state.updatedAt)return null;const tm=numericTime(timeOnly(state.updatedAt)),v=historicalAt(tm,$('yearSel').value);return v===null?null:state.turnout.percent-v;}
@@ -179,5 +198,68 @@ function initEvents(){document.querySelectorAll('[data-jump]').forEach(el=>el.ad
  $('exportCsv').addEventListener('click',()=>{let rows=filteredLocs(),cols=['יישוב','מחוז','בעלי זכות בחירה','מצביעים','אחוז הצבעה','אחוז השוואה באותה שעה','קלפיות מדווחות','סך קלפיות'];let data=[cols,...rows.map(r=>[r.name,r.district,r.eligibleVoters,r.voters,r.turnoutPercent,r.historicalComparablePercent,r.ballotsReported,r.totalBallots])].map(row=>row.map(x=>'"'+String(x??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');download('election_localities_'+(demo?'DEMO':'data')+'.csv',data,'text/csv;charset=utf-8')});
 }
 restore();initEvents();$('sourceUrl').value='מקור הנתונים מוגדר ב־Vercel';$('refreshSel').value=String(config.refreshSeconds);$('autoSel').value=config.auto?'yes':'no';render();schedule();if(location.protocol!=='file:')poll();
+
+// Archive explorer: independent open data with official records cited by the archive.
+const historyCache=new Map(); let historyError='', mediaTimer=null;
+async function getRound(round){
+  if(historyCache.has(round))return historyCache.get(round);
+  const response=await fetch('/api/history?round='+Number(round),{cache:'no-store'});
+  const result=await response.json();
+  if(!response.ok||!result.ok)throw Error(result.error||'לא ניתן לטעון את נתוני הארכיון');
+  historyCache.set(round,result);return result;
+}
+function yearLabel(round){return ({21:'2019 אפריל',22:'2019 ספטמבר',23:'2020',24:'2021',25:'2022'})[round]||round}
+async function loadArchive(){
+ const a=Number($('archiveRound').value),b=Number($('compareRound').value);
+ $('archiveMeta').textContent='טוען נתונים פתוחים לפי יישוב…';
+ try{
+  const [primary,compare]=await Promise.all([getRound(a),getRound(b)]);
+  window.archiveData={primary,compare,a,b};historyError='';renderArchive();
+ }catch(e){historyError=e.message;$('archiveMeta').textContent='שגיאה בטעינה אוטומטית: '+e.message+' · ניתן להשתמש בגרפים ובנתונים הארציים השמורים בדשבורד.';$('historicalStats').innerHTML='';$('archiveRows').innerHTML='<tr><td colspan="7" class="muted" style="padding:20px">מקור הארכיון לא זמין כרגע. בדוק שוב מאוחר יותר.</td></tr>'}
+}
+function renderArchive(){
+ const d=window.archiveData;if(!d)return;
+ const {primary,compare,a,b}=d;
+ const ma=primary.metadata.find(x=>x.knesset===a)||{},mb=compare.metadata.find(x=>x.knesset===b)||{};
+ const full=primary.localities,second=new Map(compare.localities.map(x=>[String(x.code??x.name),x]));
+ const q=$('archiveSearch').value.trim();let rows=full.filter(x=>!q||x.name.includes(q));
+ rows=rows.map(x=>({...x,prev:second.get(String(x.code??x.name))||null}));
+ rows.sort((x,y)=>x.name.localeCompare(y.name,'he'));
+ const pctdiff=(Number(ma.turnoutPct)-Number(mb.turnoutPct));
+ const allowed=(x)=>Number.isFinite(Number(x))?Number(x).toLocaleString('he-IL',{maximumFractionDigits:2}):'—';
+ $('archiveMeta').textContent=`${yearLabel(a)} מול ${yearLabel(b)} · ${rows.length} מתוך ${full.length} יישובים · מאגר חיצוני המבוסס על הנתונים הרשמיים`;
+ const meter=primary.mandate?.baseMeter;
+ $('historicalStats').innerHTML=[
+ ['שיעור הצבעה · '+yearLabel(a),pct(ma.turnoutPct)],
+ ['שינוי בשיעור ההצבעה',(pctdiff>=0?'+':'')+dec(pctdiff)+' נק׳'],
+ ['מספר המצביעים',fmt(ma.voters)],
+ ['מודד קולות למנדט · '+yearLabel(a),meter!=null?fmt(Math.floor(meter)):'—']
+ ].map(([label,value])=>`<div class="historical-stat"><span>${safeText(label)}</span><b>${safeText(value)}</b></div>`).join('');
+ $('archiveRows').innerHTML=rows.slice(0,500).map(x=>{
+  const v=x.prev,delta=x.turnoutPercent!==null&&v?.turnoutPercent!=null?x.turnoutPercent-v.turnoutPercent:null;
+  const votersDelta=v?x.voters-v.voters:null;
+  return `<tr><td><b>${safeText(x.name)}</b></td><td class="mono">${fmt(x.eligibleVoters)}</td><td class="mono">${fmt(x.voters)}</td><td>${pct(x.turnoutPercent)}</td><td>${pct(v?.turnoutPercent)}</td><td class="${delta===null?'muted':delta>=0?'up':'down'}">${delta===null?'—':(delta>=0?'+':'')+dec(delta)+' נק׳'}</td><td class="${votersDelta===null?'muted':votersDelta>=0?'up':'down'}">${votersDelta===null?'—':(votersDelta>=0?'+':'')+fmt(votersDelta)}</td></tr>`;
+ }).join('')||'<tr><td colspan="7">לא נמצאו התאמות</td></tr>';
+}
+async function loadMedia(){
+ if(demo)return;
+ try{
+  const r=await fetch('/api/media',{cache:'no-store'}),out=await r.json();
+  if(out.ok){
+   const known=new Set(state.news.map(n=>n.url));
+   const incoming=out.items.filter(x=>!known.has(x.url));
+   state.news=[...incoming,...state.news].slice(0,70);
+   $('mediaAutoStatus').innerHTML='כותרות חדשות: '+out.items.length+' פרסומים ממקור RSS חיצוני. הכותרות אינן אימות לטענות שבתוכן. לפרסומים ברשת X: <a href="https://x.com/search?q=%D7%91%D7%97%D7%99%D7%A8%D7%95%D7%AA%202026&f=live" target="_blank" rel="noopener noreferrer">חיפוש X ↗</a> (ללא API מחובר).';
+   renderMedia();
+  }else {$('mediaAutoStatus').textContent='מקור כותרות החדשות אינו זמין כעת. ניתן עדיין להוסיף פרסומים ידנית.'}
+ }catch(e){$('mediaAutoStatus').textContent='חיבור החדשות לא זמין כעת; המערכת ממשיכה לפעול בלעדיו.'}
+}
+$('archiveRound').addEventListener('change',loadArchive);
+$('compareRound').addEventListener('change',loadArchive);
+$('archiveSearch').addEventListener('input',renderArchive);
+if(location.protocol!=='file:'){
+ loadArchive();loadMedia();mediaTimer=setInterval(loadMedia,300000);
+}else{$('archiveMeta').textContent='יש לפתוח את האתר בפריסת Vercel כדי לשלוף נתונים היסטוריים מרחוק.'}
+
 </script>
 </body></html>

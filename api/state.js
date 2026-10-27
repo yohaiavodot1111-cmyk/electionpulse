@@ -45,7 +45,7 @@ export default async function handler(req,res){
  const checkedAt=new Date().toISOString();
  let incoming=[],error=null,retrieved=false;
  try {
-   const r=await fetch(URL,{headers:{Accept:'text/html','User-Agent':'Mozilla/5.0 (compatible; ElectionPulse/2.0)'},signal:AbortSignal.timeout(6000),redirect:'follow',cache:'no-store'});
+   const r=await fetch(URL,{headers:{Accept:'text/html','User-Agent':'Mozilla/5.0 (compatible; ElectionPulse/2.0)'},signal:AbortSignal.timeout(3200),redirect:'follow',cache:'no-store'});
    if(!r.ok)throw Error('HTTP '+r.status);
    if(Number(r.headers.get('content-length')||0)>3000000)throw Error('Publisher response too large');
    const html=await r.text();
@@ -54,7 +54,7 @@ export default async function handler(req,res){
    retrieved=true;
  } catch(e) {error=String(e?.message||e).slice(0,180);}
  try {
-   const k=await fetch(KAN,{headers:{Accept:'text/html'},signal:AbortSignal.timeout(4500),cache:'no-store'});
+   const k=await fetch(KAN,{headers:{Accept:'text/html'},signal:AbortSignal.timeout(3200),cache:'no-store'});
    if(k.ok){const html=await k.text();if(html.length<750000){const extra=parseKan(html);incoming.push(...extra);if(extra.length)retrieved=true;}}
  } catch {} // Last verified news snapshots remain available.
  const byTime=new Map(SNAPSHOTS.map(p=>[p.time,p.percent]));
@@ -66,7 +66,7 @@ export default async function handler(req,res){
  const updatedAt='2026-10-27T'+last.time+':00+02:00';
  res.setHeader('Cache-Control','public, s-maxage=90, stale-while-revalidate=60');
  return res.status(200).json({
-   configured:true,lastCheck:checkedAt,lastSuccess:fetchedLatest?checkedAt:null,lastError:error,
+   configured:true,lastCheck:checkedAt,lastSuccess:fetchedLatest?checkedAt:null,lastError:null,sourceWarning:error,
    sourceHost:'news-reporters',sourceMode:fetchedLatest?'news-retrieved':'verified-news-snapshot',
    message:fetchedLatest?'Retrieved turnout as reported by publisher':'Most recent previously verified published observation; source may be inaccessible',
    data:{election:26,eligibleVoters:ELIGIBLE,totalBallots:12018,

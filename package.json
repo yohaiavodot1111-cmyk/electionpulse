@@ -1,0 +1,14 @@
+{
+  "name": "electionpulse-vercel",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Israel election turnout analytics dashboard — Vercel serverless + static client",
+  "scripts": {
+    "dev": "node local-server.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

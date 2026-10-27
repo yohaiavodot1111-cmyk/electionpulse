@@ -8,7 +8,8 @@ const RSS='https://news.google.com/rss/search?q='+encodeURIComponent('אחוז �
 const KNOWN=[
   {time:'10:00',percent:16.68,voters:null,source:'i24NEWS – דיווח ועדת הבחירות',url:'https://www.i24news.tv/he/news/israel-elections-2026/artc-f95249f2'},
   {time:'12:00',percent:31.5,voters:2309587,source:'גלובס – דיווח ועדת הבחירות',url:'https://en.globes.co.il/news/article.aspx?did=1001560922'},
-  {time:'14:00',percent:44.9,voters:3290480,source:'עולם קטן – דיווח ועדת הבחירות',url:'https://www.okn.co.il/news/73351/'}
+  {time:'14:00',percent:44.9,voters:3290480,source:'עולם קטן – דיווח ועדת הבחירות',url:'https://www.okn.co.il/news/73351/'},
+  {time:'16:00',percent:55.7,voters:null,source:'זמן ישראל – נתוני ועדת הבחירות',url:'https://www.zman.co.il/live/737030/'}
 ];
 function decode(s){
  return String(s||'').replace(/&#(\d+);/g,(_,v)=>String.fromCodePoint(Number(v))).replace(/&#x([a-f0-9]+);/gi,(_,v)=>String.fromCodePoint(parseInt(v,16))).replace(/&nbsp;|&zwnj;/gi,' ').replace(/&amp;/gi,'&').replace(/&quot;/gi,'"').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>');

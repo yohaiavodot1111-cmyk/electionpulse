@@ -11,18 +11,34 @@ function mockRes(){
   };
 }
 
-test('API without configured URL explicitly returns no live data',async()=>{
-  const orig=process.env.ELECTION_FEED_URL;
-  delete process.env.ELECTION_FEED_URL;
-  try {
+test('reported turnout is served without manual API configuration',async()=>{
+  const priorFetch=globalThis.fetch;
+  globalThis.fetch=async()=>{throw Error('source temporarily unavailable')};
+  try{
     const res=mockRes();await handler({method:'GET'},res);
     assert.equal(res.statusCode,200);
-    assert.equal(res.value.configured,false);
-    assert.equal(res.value.data,null);
-  } finally { if(orig!==undefined)process.env.ELECTION_FEED_URL=orig; }
+    assert.equal(res.value.configured,true);
+    assert.equal(res.value.data.sourceType,'reported');
+    assert.equal(res.value.data.turnout.percent,44.9);
+    assert.equal(res.value.data.turnout.voters,3290480);
+    assert.equal(res.value.data.updatedAt,'2026-10-27T14:00:00+02:00');
+    assert.equal(res.value.sourceMode,'verified-news-snapshot');
+    assert.equal(res.value.lastError,null);
+  }finally{globalThis.fetch=priorFetch}
 });
 
-test('API is read-only', async()=>{
+test('public news feed adds later turnout reports when detected',async()=>{
+ const originalFetch=globalThis.fetch;
+ globalThis.fetch=async(url)=>({ok:true,headers:new Headers({'content-length':'100'}),text:async()=>String(url).includes('kan.org.il')?'שיעור ההצבעה עד לשעה 16:00 - 55.2%':'אין דיווחי השתתפות בכתבה הזו'});
+ try{
+   const res=mockRes();await handler({method:'GET'},res);
+   assert.equal(res.value.data.turnout.percent,55.2);
+   assert.equal(res.value.data.updatedAt,'2026-10-27T16:00:00+02:00');
+   assert.equal(res.value.sourceMode,'news-retrieved');
+ }finally{globalThis.fetch=originalFetch}
+});
+
+test('API remains read-only',async()=>{
   const res=mockRes();await handler({method:'POST'},res);
   assert.equal(res.statusCode,405);
 });
